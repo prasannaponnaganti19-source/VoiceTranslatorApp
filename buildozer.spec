@@ -9,7 +9,7 @@ source.include_exts = py
 version = 0.1
 entrypoint = main.py
 
-requirements = python3==3.10,kivy,requests,speechrecognition,gtts,deep-translator
+requirements = python3,kivy,requests,speechrecognition,gtts,deep-translator
 
 orientation = portrait
 fullscreen = 0
