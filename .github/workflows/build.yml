@@ -2,47 +2,35 @@ name: Build APK
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
 
       - name: Install system packages
         run: |
           sudo apt update
-          sudo apt install -y \
-            openjdk-17-jdk \
-            unzip zip \
-            git \
-            build-essential \
-            libssl-dev \
-            libffi-dev \
-            libsqlite3-dev \
-            zlib1g-dev
+          sudo apt install -y zip unzip openjdk-17-jdk python3-pip
 
       - name: Install Buildozer
         run: |
-          python -m pip install --upgrade pip
-          pip install buildozer cython==0.29.36
+          pip install --upgrade pip
+          pip install buildozer cython
 
       - name: Install Android SDK cmdline-tools
         run: |
           mkdir -p $HOME/android-sdk/cmdline-tools
-          cd $HOME/android-sdk
+          cd $HOME/android-sdk/cmdline-tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
           unzip commandlinetools-linux-11076708_latest.zip
-          mv cmdline-tools cmdline-tools/latest
+          mkdir -p latest
+          mv cmdline-tools/* latest/
+          rm -rf cmdline-tools
 
       - name: Set Android environment
         run: |
@@ -56,9 +44,3 @@ jobs:
       - name: Build APK
         run: |
           buildozer android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: VoiceTranslator-APK
-          path: bin/*.apk
